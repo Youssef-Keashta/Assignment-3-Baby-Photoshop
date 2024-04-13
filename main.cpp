@@ -7,7 +7,7 @@
 // Emails: Youssefkeashta@gmail.com ,manarsameh274@gmail.com, mahmoudalaa0001234@gmail.com .
 // ID1:20230573 _ he did  [Filter 1 ( GrayScale Conversion ), Filter 6 ( Rotate Image ), Filter 11 ( Resize Image ), Filter 9 ( Picture Frame ), Filter 13 ( Sunlight Effect )]
 // ID2:20231175 _ she did [Filter 3 (Invert Image)]
-// ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image)]
+// ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image) , Filter 4 (merge images) , Filter 12 (Blur images) , Filter 13 (old Den Den Mushi (televisions))]
 
 
 #include <iostream>
