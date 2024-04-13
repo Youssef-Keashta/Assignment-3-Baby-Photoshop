@@ -311,7 +311,88 @@ int Grayscale_Conversion (const string& File_Name ) {
     return 0;
 
 }
+// ============================================================ //
+// Filter 6: This filter allows the user to rotate the image clockwise by 90, 180 or 270 degrees as the user chooses
+int Rotate_Image(const string& image_name){
+    Image image(image_name);
+    int newWidth = image.height; // New width after rotation
+    int newHeight = image.width; // New height after rotation
+    Image rotatedImage(newWidth, newHeight);
+    int newWidth2 = rotatedImage.height; // New width after rotation
+    int newHeight2 = rotatedImage.width; // New height after rotation
+    Image rotatedImage2(newWidth2, newHeight2);
+    cout << "Welcome to filter 6: Rotate Image\n";
+    cout << "What angle of rotation would you like to execute?\n";
+    cout << "A) 90\n" << "B) 180\n" << "C) 270\n";
 
+    char c;
+    cin >> c;
+    c = toupper(c);
+
+    while (c != 'A' && c != 'B' && c != 'C') {
+        cout << "Please choose a valid option!\n";
+        cout << "What angle of rotation would you like to execute?\n";
+        cout << "A) 90\n" << "B) 180\n" << "C) 270\n";
+        cin >> c;
+        c = toupper(c);
+    }
+
+    if (c == 'A') { // Rotate the image by 90 degrees clockwise
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < image.channels; ++k) {
+                    rotatedImage(image.height - 1 - j, i, k) = image(i, j, k);
+                }
+            }
+        }
+        // Save the rotated image
+        string Res;
+        cout << "What would you like to name the result file?\n";
+        cout << "Type name and format you would like file to be saved as\n";
+        cin >> Res;
+        rotatedImage.saveImage(Res);
+
+    }
+    else if (c == 'B') { // Rotate the image by 180 degrees clockwise
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < image.channels; ++k) {
+                    rotatedImage(image.height - 1 - j, i, k) = image(i, j, k);
+                }
+            }
+        }
+        for (int i = 0; i < rotatedImage.width; ++i) {
+            for (int j = 0; j < rotatedImage.height; ++j) {
+                for (int k = 0; k < rotatedImage.channels; ++k) {
+                    rotatedImage2(rotatedImage.height - 1 - j, i, k) = rotatedImage(i, j, k);
+                }
+            }
+        }
+        // Save the rotated image
+        string Res;
+        cout << "What would you like to name the result file?\n";
+        cout << "Type name and format you would like file to be saved as\n";
+        cin >> Res;
+        rotatedImage2.saveImage(Res);
+
+    }
+    else if (c == 'C') { // Rotate the image by 270 degrees clockwise
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < image.channels; ++k) {
+                    rotatedImage(j, image.width - 1 - i, k) = image(i, j, k);
+                }
+            }
+        }
+        // Save the rotated image
+        string Res;
+        cout << "What would you like to name the result file?\n";
+        cout << "Type name and format you would like file to be saved as\n";
+        cin >> Res;
+        rotatedImage.saveImage(Res);
+    }
+    return 0;
+}
 
 
 
