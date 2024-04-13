@@ -430,8 +430,8 @@ int Resize_Image(const string& image_name){
 // Filter 9: Adding a frame to a picture
 // This is one of the frame options which is a function to add a single border to the image
 
-int SingleBorderImg(const string& Image_Name){
-    Image image(Image_Name);
+int SingleBorderImg(const string& image_name){
+    Image image(image_name);
     int BWidth, BHeight;
     cout<<"Insert Width and Height of the Frame Border: ";
     cin>>BWidth>>BHeight;
@@ -516,8 +516,8 @@ int SingleBorderImg(const string& Image_Name){
 
 // This is another one of the frame options which is a function to add a double border to the image
 
-int DoubleBorderImg(const string& Image_Name){
-    Image image(Image_Name);
+int DoubleBorderImg(const string& image_name){
+    Image image(image_name);
     int BWidth, BHeight;
     cout<<"Insert Width and Height of the Frame Inner Border: ";
     cin>>BWidth>>BHeight;
@@ -678,8 +678,8 @@ int DoubleBorderImg(const string& Image_Name){
 
 // This is another one of the frame options which is a function to add a spaced double border to the image
 
-int SpacedDoubleBorderImg(const string& Image_Name){
-    Image image(Image_Name);
+int SpacedDoubleBorderImg(const string& image_name){
+    Image image(image_name);
     int BWidth, BHeight;
     cout<<"Insert Width and Height of the Frame Inner Border: ";
     cin>>BWidth>>BHeight;
@@ -849,23 +849,17 @@ int Frame_Image(){
         cin>>c;
         c = toupper(c);
         if(c=='A'){
-            string Image_Name;
-            cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
-            cin>>Image_Name;
-            SingleBorderImg(Image_Name);
+        
+            SingleBorderImg(image_name);
 
         }
         else if (c=='B'){
-            string Image_Name;
-            cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
-            cin>>Image_Name;
-            DoubleBorderImg(Image_Name);
+            
+            DoubleBorderImg(image_name);
         }
         else if(c=='C'){
-            string Image_Name;
-            cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
-            cin>>Image_Name;
-            SpacedDoubleBorderImg(Image_Name);
+            
+            SpacedDoubleBorderImg(image_name);
         }
         else if (c=='D'){
             break;
@@ -874,6 +868,38 @@ int Frame_Image(){
             cout<<"Please choose valid option!";
         }
     }
+    return 0;
+}
+
+// ============================================================ //
+// Filter 13: Sunlight Effect
+// This filter adds a yellowish effect to the picture to allow for a 'sunlight' effect
+
+int SunshineEffect(const string& image_name){
+    Image image(image_name);
+    Image image1(image.width, image.height);
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < image.channels; ++k) {
+                if (k == 0){
+                    int R = image(i,j,k) * 1.2;
+                    image1(i ,j, k) = min(R, 255);
+                }
+                else if (k == 1){
+                    int G = image(i,j,k) * 1.2;
+                    image1(i ,j, k) = min(G, 255);
+                }
+                else {
+                    int B = image(i,j,k) *0.8;
+                    image1(i,j,k)= max(B, 0);
+                }
+            }
+        }
+    }
+    string Res;
+    cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
+    cin>>Res;
+    image1.saveImage(Res);
     return 0;
 }
 
