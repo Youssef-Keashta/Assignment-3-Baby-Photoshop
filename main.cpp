@@ -426,6 +426,458 @@ int Resize_Image(const string& image_name){
     return 0;
 }
 
+// ============================================================ //
+// Filter 9: Adding a frame to a picture
+// This is one of the frame options which is a function to add a single border to the image
+
+int SingleBorderImg(const string& Image_Name){
+    Image image(Image_Name);
+    int BWidth, BHeight;
+    cout<<"Insert Width and Height of the Frame Border: ";
+    cin>>BWidth>>BHeight;
+    int BW2 = BWidth*2, BH2 = 2*BHeight;
+    int R, G, B;
+    cout<<"Insert Values for R G B for the Frame Border: ";
+    cin>>R>>G>>B;
+    Image image1(image.width+BW2, image.height+BH2);
+    for (int i = 0; i < BWidth; ++i) {
+        for (int j = 0; j < image1.height; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G ;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image1.width; ++i) {
+        for (int j = 0; j < BHeight; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R ;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G ;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = image1.width-1; i >image1.width-BWidth-1; --i) {
+        for (int j = 0; j < image1.height; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R ;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image1.width; ++i) {
+        for (int j = image1.height-1; j > image1.height - BHeight-1; --j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G ;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = BWidth; i < image1.width-BWidth; ++i) {
+        for (int j = BHeight; j <image1.height-BHeight; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                image1(i, j, k) = image(i-BWidth, j-BHeight, k);
+            }
+        }
+    }
+    string Res;
+    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
+    cin>>Res;
+    image1.saveImage(Res);
+    return 0;
+}
+
+// This is another one of the frame options which is a function to add a double border to the image
+
+int DoubleBorderImg(const string& Image_Name){
+    Image image(Image_Name);
+    int BWidth, BHeight;
+    cout<<"Insert Width and Height of the Frame Inner Border: ";
+    cin>>BWidth>>BHeight;
+    int BW2 = BWidth*2, BH2 = 2*BHeight;
+    int R, G, B;
+    cout<<"Insert Values for R G B for the Frame Inner Border: ";
+    cin>>R>>G>>B;
+    Image image1(image.width+BW2, image.height+BH2);
+    for (int i = 0; i < BWidth; ++i) {
+        for (int j = 0; j < image1.height; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G ;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image1.width; ++i) {
+        for (int j = 0; j < BHeight; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R ;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G ;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = image1.width-1; i >image1.width-BWidth-1; --i) {
+        for (int j = 0; j < image1.height; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R ;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image1.width; ++i) {
+        for (int j = image1.height-1; j > image1.height - BHeight-1; --j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G ;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = BWidth; i < image1.width-BWidth; ++i) {
+        for (int j = BHeight; j <image1.height-BHeight; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                image1(i, j, k) = image(i-BWidth, j-BHeight, k);
+            }
+        }
+    }
+    int BWidth2, BHeight2;
+    cout<<"Insert Width and Height of the Frame Outer Border: ";
+    cin>>BWidth2>>BHeight2;
+    int B2W2 = BWidth2*2, B2H2 = 2*BHeight2;
+    int R2, G2, B2;
+    cout<<"Insert Values for R G B for the Frame Outer Border: ";
+    cin>>R2>>G2>>B2;
+    Image image2(image1.width+B2W2, image1.height+B2H2);
+    for (int i = 0; i < BWidth2; ++i) {
+        for (int j = 0; j < image2.height; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image2.width; ++i) {
+        for (int j = 0; j < BHeight2; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+    for (int i = image2.width-1; i >image1.width-BWidth2-1; --i) {
+        for (int j = 0; j < image2.height; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image2.width; ++i) {
+        for (int j = image2.height-1; j > image2.height - BHeight2-1; --j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+
+    for (int i = BWidth2; i < image2.width-BWidth2; ++i) {
+        for (int j = BHeight2; j <image2.height-BHeight2; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                image2(i, j, k) = image1(i-BWidth2, j-BHeight2, k);
+            }
+        }
+    }
+    string Res;
+    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
+    cin>>Res;
+    image2.saveImage(Res);
+    return 0;
+}
+
+// This is another one of the frame options which is a function to add a spaced double border to the image
+
+int SpacedDoubleBorderImg(const string& Image_Name){
+    Image image(Image_Name);
+    int BWidth, BHeight;
+    cout<<"Insert Width and Height of the Frame Inner Border: ";
+    cin>>BWidth>>BHeight;
+    int Space;
+    cout<<"Insert the value of the Space between the two borders: ";
+    cin>>Space;
+    int R, G, B;
+    cout<<"Insert Values for R G B for the Frame Inner Border: ";
+    cin>>R>>G>>B;
+    Image image1(image.width, image.height);
+    for (int i = 0; i < image1.width; ++i) {
+        for (int j = 0; j <image1.height; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                image1(i, j, k) = image(i, j, k);
+            }
+        }
+    }
+    for (int i = Space-1; i < BWidth+Space; ++i) {
+        for (int j = Space-1; j < image1.height-Space; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B;
+                }
+            }
+        }
+    }
+    for (int i = Space-1; i < image1.width-Space; ++i) {
+        for (int j = Space-1; j < BHeight+Space; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B;
+                }
+            }
+        }
+    }
+    for (int i = image1.width-(Space+1); i >image1.width-(BWidth+1+Space); --i) {
+        for (int j = Space-1; j < image1.height-Space; ++j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R ;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    for (int i = Space-1; i < image1.width-Space; ++i) {
+        for (int j = image1.height-(Space+1); j > image1.height - (BHeight+Space+1); --j) {
+            for (int k = 0; k < image1.channels; ++k) {
+                if (k==0){
+                    image1(i, j, k) = R;
+                }
+                else if (k==1){
+                    image1(i, j, k) = G ;
+                }
+                else if (k==2){
+                    image1(i, j, k) = B ;
+                }
+            }
+        }
+    }
+    int BWidth2, BHeight2;
+    cout<<"Insert Width and Height of the Frame Outer Border: ";
+    cin>>BWidth2>>BHeight2;
+    int B2W2 = BWidth2*2, B2H2 = 2*BHeight2;
+    int R2, G2, B2;
+    cout<<"Insert Values for R G B for the Frame Outer Border: ";
+    cin>>R2>>G2>>B2;
+    Image image2(image1.width+B2W2, image1.height+B2H2);
+    for (int i = 0; i < BWidth2; ++i) {
+        for (int j = 0; j < image2.height; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image2.width; ++i) {
+        for (int j = 0; j < BHeight2; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+    for (int i = image2.width-1; i >image1.width-BWidth2-1; --i) {
+        for (int j = 0; j < image2.height; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < image2.width; ++i) {
+        for (int j = image2.height-1; j > image2.height - BHeight2-1; --j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                if (k==0){
+                    image2(i, j, k) = R2;
+                }
+                else if (k==1){
+                    image2(i, j, k) = G2;
+                }
+                else if (k==2){
+                    image2(i, j, k) = B2;
+                }
+            }
+        }
+    }
+
+    for (int i = BWidth2; i < image2.width-BWidth2; ++i) {
+        for (int j = BHeight2; j <image2.height-BHeight2; ++j) {
+            for (int k = 0; k < image2.channels; ++k) {
+                image2(i, j, k) = image1(i-BWidth2, j-BHeight2, k);
+            }
+        }
+    }
+    string Res;
+    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
+    cin>>Res;
+    image2.saveImage(Res);
+    return 0;
+}
+
+// This is the function which combines all the other filters in one function
+
+int Frame_Image(){
+    while (true){
+        char c;
+        cout<<"Choose Frame: \n"<<"A) Single Border\n"<<"B) Double Border\n"<<"C) Spaced Double Border\n"<<"D) Back to Main Menu\n";
+        cin>>c;
+        c = toupper(c);
+        if(c=='A'){
+            string Image_Name;
+            cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
+            cin>>Image_Name;
+            SingleBorderImg(Image_Name);
+
+        }
+        else if (c=='B'){
+            string Image_Name;
+            cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
+            cin>>Image_Name;
+            DoubleBorderImg(Image_Name);
+        }
+        else if(c=='C'){
+            string Image_Name;
+            cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
+            cin>>Image_Name;
+            SpacedDoubleBorderImg(Image_Name);
+        }
+        else if (c=='D'){
+            break;
+        }
+        else{
+            cout<<"Please choose valid option!";
+        }
+    }
+    return 0;
+}
+
+
 
 int main() {
     char choice;
