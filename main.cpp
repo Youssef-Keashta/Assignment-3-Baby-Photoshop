@@ -925,6 +925,10 @@ int main() {
             cout << "5. Grayscale Conversion.\n" ;
             cout << "6. Merge Images.\n";
             cout << "7. Blur Image.\n";
+            cout<< "8. Rotate Image.\n";
+            cout<< "9. Resize Image.\n";
+            cout<< "10. Picture Frame.\n";
+            cout<< "11. Sunlight Effect.\n";
             char filter_choice;
             cin >> filter_choice;
             cout << "Please enter the image name: ";
@@ -963,6 +967,18 @@ int main() {
 
                     applyBlur(my_image, blur_radius);
                     break;
+                }
+                case '8' :{
+                    Rotate_Image(image_name);
+                }
+                case '9':{
+                    Resize_Image(image_name);
+                }
+                case '10' :{
+                    Frame_Image();
+                }
+                case '11' :{
+                    SunshineEffect(image_name);
                 }
                 default : {
                     cout << " Invalid Input.";
