@@ -5,7 +5,7 @@
 // Author2: Manar Sameh Abdel Samad , ID2 : 20231175 .
 // Author3: Mahmoud Alaa Mahmoud , ID3 : 20231154 .
 // Emails: Youssefkeashta@gmail.com ,manarsameh274@gmail.com, mahmoudalaa0001234@gmail.com .
-// ID1:20230573 _ he did  [Filter 1 ( GrayScale Conversion )]
+// ID1:20230573 _ he did  [Filter 1 ( GrayScale Conversion ), Filter 6 ( Rotate Image ), Filter 11 ( Resize Image ), Filter 9 ( Picture Frame ), Filter 13 ( Sunlight Effect )]
 // ID2:20231175 _ she did [Filter 3 (Invert Image)]
 // ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image)]
 
@@ -14,6 +14,7 @@
 #include <string>
 #include "vector"
 #include "Image_Class.h"
+#include <cmath>
 
 
 using namespace std;
@@ -394,7 +395,36 @@ int Rotate_Image(const string& image_name){
     return 0;
 }
 
+// ============================================================ //
+// Filter 11: Resizing an image involves changing the dimensions of the entire image while maintaining the same image details
 
+int Resize_Image(const string& image_name){
+    Image image(image_name);
+    cout<<"Current Width and Height of image is: \n";
+    cout<<"Width: "<<image.width<<endl;
+    cout<<"Height: "<<image.height<<endl;
+    int newWidth, newHeight;
+    cout<<"Enter the new dimensions you wish to use for your image: \n";
+    cout<<"Width: ";
+    cin>>newWidth;
+    cout<<"Height: ";
+    cin>>newHeight;
+    Image resized_img(newWidth, newHeight);
+    float scaleW = (1.0f*image.width/newWidth), scaleH = (1.0f*image.height/newHeight);
+    for (int i = 0; i < resized_img.height; ++i) {
+        for (int j = 0; j < resized_img.width; ++j) {
+            for (int k = 0; k <resized_img.channels; ++k) {
+                resized_img(j, i, k) = image(round((j*scaleW)), round((i*scaleH)), k);
+            }
+        }
+    }
+    cout<<"What would you like to name the result file?\n";
+    cout<<"Type name and format you would like file to be saved as\n";
+    string Res;
+    cin>>Res;
+    resized_img.saveImage(Res);
+    return 0;
+}
 
 
 int main() {
