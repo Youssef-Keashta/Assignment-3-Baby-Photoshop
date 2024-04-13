@@ -842,7 +842,7 @@ int SpacedDoubleBorderImg(const string& image_name){
 
 // This is the function which combines all the other filters in one function
 
-int Frame_Image(){
+int Frame_Image(const string& image_name){
     while (true){
         char c;
         cout<<"Choose Frame: \n"<<"A) Single Border\n"<<"B) Double Border\n"<<"C) Spaced Double Border\n"<<"D) Back to Main Menu\n";
