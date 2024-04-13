@@ -7,7 +7,7 @@
 // Emails: Youssefkeashta@gmail.com ,manarsameh274@gmail.com, mahmoudalaa0001234@gmail.com .
 // ID1:20230573 _ he did  [Filter 1 ( GrayScale Conversion ), Filter 6 ( Rotate Image ), Filter 11 ( Resize Image ), Filter 9 ( Picture Frame ), Filter 13 ( Sunlight Effect )]
 // ID2:20231175 _ she did [Filter 3 (Invert Image)]
-// ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image)]
+// ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image) , Filter 4 (merge images) , Filter 12 (Blur 2 Images) , Filter 15 (DenDen_Mushi_Filter)]
 
 
 #include <iostream>
@@ -18,7 +18,32 @@
 
 
 using namespace std;
+// Function to apply the Den Den Mushi filter to the image
+int apply_DenDen_Mushi_Filter(Image& image) {
+    srand(time(NULL));
 
+    // Add static noise
+    for (int y = 0; y < image.height; ++y) {
+        for (int x = 0; x < image.width; ++x) {
+            for (int c = 0; c < image.channels; ++c) {
+                // Add random noise with a certain probability
+                if (rand() % 100 < 5) {
+                    unsigned char noise = rand() % 256;
+                    image.setPixel(x, y, c, noise);
+                }
+            }
+        }
+    }
+    // Ask the user for the output image file name
+    string output_filename;
+    cout << "Please enter the output image name with extension (.jpg, .bmp, .png, .tga): ";
+    cin >> output_filename;
+
+    // Save the inverted image
+    image.saveImage(output_filename);
+    system(output_filename.c_str());
+    return 0 ;
+}
 
 // Function to apply blur using 2D prefix sum
 void applyBlur(Image& image, int blur_radius) {
@@ -352,6 +377,7 @@ int Rotate_Image(const string& image_name){
         cout << "Type name and format you would like file to be saved as\n";
         cin >> Res;
         rotatedImage.saveImage(Res);
+        system(Res.c_str());
 
     }
     else if (c == 'B') { // Rotate the image by 180 degrees clockwise
@@ -375,6 +401,7 @@ int Rotate_Image(const string& image_name){
         cout << "Type name and format you would like file to be saved as\n";
         cin >> Res;
         rotatedImage2.saveImage(Res);
+        system(Res.c_str());
 
     }
     else if (c == 'C') { // Rotate the image by 270 degrees clockwise
@@ -391,6 +418,7 @@ int Rotate_Image(const string& image_name){
         cout << "Type name and format you would like file to be saved as\n";
         cin >> Res;
         rotatedImage.saveImage(Res);
+        system(Res.c_str());
     }
     return 0;
 }
@@ -423,6 +451,7 @@ int Resize_Image(const string& image_name){
     string Res;
     cin>>Res;
     resized_img.saveImage(Res);
+    system(Res.c_str());
     return 0;
 }
 
@@ -511,6 +540,7 @@ int SingleBorderImg(const string& image_name){
     cout<<"What would you like to name the result file? (Include the format in the naming)\n";
     cin>>Res;
     image1.saveImage(Res);
+    system(Res.c_str());
     return 0;
 }
 
@@ -673,6 +703,7 @@ int DoubleBorderImg(const string& image_name){
     cout<<"What would you like to name the result file? (Include the format in the naming)\n";
     cin>>Res;
     image2.saveImage(Res);
+    system(Res.c_str());
     return 0;
 }
 
@@ -837,6 +868,7 @@ int SpacedDoubleBorderImg(const string& image_name){
     cout<<"What would you like to name the result file? (Include the format in the naming)\n";
     cin>>Res;
     image2.saveImage(Res);
+    system(Res.c_str());
     return 0;
 }
 
@@ -849,16 +881,16 @@ int Frame_Image(const string& image_name){
         cin>>c;
         c = toupper(c);
         if(c=='A'){
-        
+
             SingleBorderImg(image_name);
 
         }
         else if (c=='B'){
-            
+
             DoubleBorderImg(image_name);
         }
         else if(c=='C'){
-            
+
             SpacedDoubleBorderImg(image_name);
         }
         else if (c=='D'){
@@ -900,6 +932,7 @@ int SunshineEffect(const string& image_name){
     cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
     cin>>Res;
     image1.saveImage(Res);
+    system(Res.c_str());
     return 0;
 }
 
@@ -925,10 +958,11 @@ int main() {
             cout << "5. Grayscale Conversion.\n" ;
             cout << "6. Merge Images.\n";
             cout << "7. Blur Image.\n";
-            cout<< "8. Rotate Image.\n";
-            cout<< "9. Resize Image.\n";
-            cout<< "10. Picture Frame.\n";
-            cout<< "11. Sunlight Effect.\n";
+            cout << "8. Rotate Image.\n";
+            cout << "9. Resize Image.\n";
+            cout << "10. Picture Frame.\n";
+            cout << "11. Sunlight Effect.\n";
+            cout << "12. apply_DenDen_Mushi_Filter.\n";
             char filter_choice;
             cin >> filter_choice;
             cout << "Please enter the image name: ";
@@ -970,15 +1004,24 @@ int main() {
                 }
                 case '8' :{
                     Rotate_Image(image_name);
+                    break ;
                 }
                 case '9':{
                     Resize_Image(image_name);
+                    break;
                 }
                 case '10' :{
-                    Frame_Image();
+                    Frame_Image(image_name);
+                    break;
                 }
                 case '11' :{
                     SunshineEffect(image_name);
+                    break;
+                }
+                case '12' : {
+                    Image my_image (image_name) ;
+                    apply_DenDen_Mushi_Filter (my_image);
+                    break;
                 }
                 default : {
                     cout << " Invalid Input.";
@@ -997,4 +1040,3 @@ int main() {
 
     return 0;
 }
-
