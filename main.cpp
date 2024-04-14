@@ -5,9 +5,9 @@
 // Author2: Manar Sameh Abdel Samad , ID2 : 20231175 .
 // Author3: Mahmoud Alaa Mahmoud , ID3 : 20231154 .
 // Emails: Youssefkeashta@gmail.com ,manarsameh274@gmail.com, mahmoudalaa0001234@gmail.com .
-// ID1:20230573 _ he did  [Filter 1 ( GrayScale Conversion ), Filter 6 ( Rotate Image ), Filter 11 ( Resize Image ), Filter 9 ( Picture Frame ), Filter 13 ( Sunlight Effect )]
-// ID2:20231175 _ she did [Filter 3 (Invert Image)]
-// ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image) , Filter 4 (merge images) , Filter 12 (Blur 2 Images) , Filter 15 (DenDen_Mushi_Filter)]
+// ID1:20230573 _ he did  [Filter 1 ( GrayScale Conversion ), Filter 4 ( Merge Images ), Filter 7 ( Darken and Lighten Image ), Filter 10 ( Detect Image Edges ), Filter 13 ( Sunlight Effect )]
+// ID2:20231175 _ she did [Filter 3 (Invert Image) , Filter 6 ( Rotate Image ), Filter 9 ( picture Frame ), Filter 12 ( Blur 2 Images ), Filter 16  ( purble filter )]
+// ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image) , Filter 11 (Resize Image )  , Filter 15 (DenDen_Mushi_Filter)]
 
 
 #include <iostream>
@@ -126,7 +126,7 @@ int merge_images (const string &image1,const string &image2) {
 }
 
 // Function to invert colors of an image
-int invert_image(const string& image_name) {
+int invert_image(const string& image_name){ 
     // Open the image
     Image my_image(image_name);
 
@@ -152,7 +152,80 @@ int invert_image(const string& image_name) {
     return 0;
 }
 
+// ------------PURBLE IMAGE FILTER ------------------
+
+int purble_image(const string& image_name) {
+        Image image(image_name);
+
+    // Convert the image to purple by adjusting the color channels
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            // Increase red and blue channels and reduce green channel
+            image(i, j, 0) = std::min(255, static_cast<int>(image(i, j, 0) * 1.5));  // Red
+            image(i, j, 1) = std::max(0, static_cast<int>(image(i, j, 1) * 0.5));    // Green
+            image(i, j, 2) = std::min(255, static_cast<int>(image(i, j, 2) * 1.5));  // Blue
+        }
+    }
+
+    string output_filename;
+    cout << "Please enter the output image name with extension (.jpg, .bmp, .png, .tga): ";
+    cin >> output_filename;
+    image.saveImage(output_filename);
+    system(output_filename.c_str());
+
+    return 0;
+}
+
+
+
+//-------------LIGHT & DARK FILTER --------------
+int light_darkfilter(const string& image_name){
+        Image image(image_name);
+
+    int choice;
+    cout << "Choose an option:\n";
+    cout << "1. Darken the image by 50%\n";
+    cout << "2. Lighten the image by 50%\n";
+    cin >> choice;
+
+    // Apply Darken or Lighten filter based on user choice
+    if (choice == 1) {
+        // Darken the image by reducing each color channel by 50%
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < image.channels; ++k) {
+                    image(i, j, k) = std::max(0, static_cast<int>(image(i, j, k) * 0.5));
+                }
+            }
+        }
+    }
+    else if (choice == 2) {
+        // Lighten the image by increasing each color channel by 50%
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < image.channels; ++k) {
+                    image(i, j, k) = std::min(255, static_cast<int>(image(i, j, k) * 1.5));
+                }
+            }
+        }
+    }
+    else {
+        cout << "Invalid choice\n";
+        return 1;
+    }
+
+    string output_filename;
+    cout << "Please enter the output image name with extension (.jpg, .bmp, .png, .tga): ";
+    cin >> output_filename;
+    image.saveImage(output_filename);
+    system(output_filename.c_str());
+
+    return 0;
+}
+
+
 // ============================================================ //
+
 
 // Function to convert an image to black and white
 int black_and_white(const string& image_name) {
@@ -963,6 +1036,8 @@ int main() {
             cout << "10. Picture Frame.\n";
             cout << "11. Sunlight Effect.\n";
             cout << "12. apply_DenDen_Mushi_Filter.\n";
+            cout << "13.purple Filter at night.\n";
+            cout << "14.light_darkfilter.\n";
             char filter_choice;
             cin >> filter_choice;
             cout << "Please enter the image name: ";
@@ -1021,6 +1096,13 @@ int main() {
                 case '12' : {
                     Image my_image (image_name) ;
                     apply_DenDen_Mushi_Filter (my_image);
+                    break;
+                case '13': {
+                    purble_image(image_name);
+                    break;
+                }
+                case '14': {
+                    light_darkfilter(image_name);
                     break;
                 }
                 default : {
