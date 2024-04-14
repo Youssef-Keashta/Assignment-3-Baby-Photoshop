@@ -1022,7 +1022,10 @@ int main() {
         cout << "A: Apply a filter to an image.\n"
              << "B: Exit.\n";
         cin >> choice;
+        choice = toupper(choice);
         if (choice == 'A') {
+            cout << "Please enter the image name: ";
+            cin >> image_name;
             cout << "Which filter would you like to apply?\n";
             cout << "A. Invert Image.\n";
             cout << "B. Black and White.\n";
@@ -1040,8 +1043,7 @@ int main() {
             cout << "N.light_darkfilter.\n";
             char filter_choice;
             cin >> filter_choice;
-            cout << "Please enter the image name: ";
-            cin >> image_name;
+            filter_choice = toupper(filter_choice);
             switch (filter_choice) {
                 case 'A':
                     invert_image(image_name);
@@ -1117,7 +1119,6 @@ int main() {
         }
         else {
             cout << "Please enter a valid input.\n";
-            break;
         }
     }
     cout << "*/* Thank you */*\n";
