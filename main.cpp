@@ -9,6 +9,11 @@
 // ID2:20231175 _ she did [Filter 3 (Invert Image) , Filter 6 ( Rotate Image ), Filter 9 ( picture Frame ), Filter 12 ( Blur 2 Images ), Filter 16  ( purble filter )]
 // ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image) , Filter 11 (Resize Image )  , Filter 15 (DenDen_Mushi_Filter)]
 
+// ---------------------the link of digram-------------------------- 
+//https://drive.google.com/file/d/1-H-aXNevYcrJmrZ_kwKYjjufES66-GYP/view?usp=sharing
+
+
+// ------------------------START PROGRAM----------------
 
 #include <iostream>
 #include <string>
@@ -42,7 +47,7 @@ int apply_DenDen_Mushi_Filter(Image& image) {
     // Save the inverted image
     image.saveImage(output_filename);
     system(output_filename.c_str());
-    return 0 ;
+    return 0;
 }
 
 // Function to apply blur using 2D prefix sum
@@ -94,13 +99,13 @@ void applyBlur(Image& image, int blur_radius) {
 
 
 // Function to Merge 2 images.
-int merge_images (const string &image1,const string &image2) {
-    Image my_image_1 (image1) ;
-    Image my_image_2 (image2) ;
-    int size_h = max(my_image_2.height,my_image_1.height) ;
-    int size_w = max(my_image_1.width,my_image_2.width) ;
+int merge_images(const string& image1, const string& image2) {
+    Image my_image_1(image1);
+    Image my_image_2(image2);
+    int size_h = max(my_image_2.height, my_image_1.height);
+    int size_w = max(my_image_1.width, my_image_2.width);
     // create an image to merge 2 images in.
-    Image merged_Image (size_h,size_w) ;
+    Image merged_Image(size_h, size_w);
     for (int i = 0; i < size_h; ++i) {
         for (int j = 0; j < size_w; ++j) {
             for (int k = 0; k < 3; ++k) {
@@ -126,7 +131,7 @@ int merge_images (const string &image1,const string &image2) {
 }
 
 // Function to invert colors of an image
-int invert_image(const string& image_name){ 
+int invert_image(const string& image_name) {
     // Open the image
     Image my_image(image_name);
 
@@ -155,7 +160,7 @@ int invert_image(const string& image_name){
 // ------------PURBLE IMAGE FILTER ------------------
 
 int purble_image(const string& image_name) {
-        Image image(image_name);
+    Image image(image_name);
 
     // Convert the image to purple by adjusting the color channels
     for (int i = 0; i < image.width; ++i) {
@@ -179,8 +184,8 @@ int purble_image(const string& image_name) {
 
 
 //-------------LIGHT & DARK FILTER --------------
-int light_darkfilter(const string& image_name){
-        Image image(image_name);
+int light_darkfilter(const string& image_name) {
+    Image image(image_name);
 
     int choice;
     cout << "Choose an option:\n";
@@ -223,7 +228,64 @@ int light_darkfilter(const string& image_name){
     return 0;
 }
 
+//---------------Detect_ImageEdges-------------
 
+int Detect_ImageEdges(const string& image_name) {
+    Image image(image_name);
+
+    // Convert the image to grayscale
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            int avg = (image(i, j, 0) + image(i, j, 1) + image(i, j, 2)) / 3;
+            image(i, j, 0) = avg;
+            image(i, j, 1) = avg;
+            image(i, j, 2) = avg;
+        }
+    }
+
+    // Sobel operator kernels
+    int kernelX[3][3] = { {1, 0, -1}, {2, 0, -2}, {1, 0, -1} };
+    int kernelY[3][3] = { {1, 2, 1}, {0, 0, 0}, {-1, -2, -1} };
+
+    // Apply Sobel operator to detect edges
+    for (int i = 1; i < image.width - 1; ++i) {
+        for (int j = 1; j < image.height - 1; ++j) {
+            int sumX = 0, sumY = 0;
+
+            // Calculate gradient using Sobel operator
+            for (int x = 0; x < 3; ++x) {
+                for (int y = 0; y < 3; ++y) {
+                    int pixelValue = image(i + x - 1, j + y - 1, 0);
+                    sumX += kernelX[x][y] * pixelValue;
+                    sumY += kernelY[x][y] * pixelValue;
+                }
+            }
+
+            // Compute magnitude of the gradient
+            int magnitude = sqrt(sumX * sumX + sumY * sumY);
+
+            // Clamp magnitude to [0, 255]
+            magnitude = min(255, max(0, magnitude));
+
+            // Enhance edges
+            magnitude = 255 - magnitude;
+
+            // Set the pixel value
+            image(i, j, 0) = magnitude;
+            image(i, j, 1) = magnitude;
+            image(i, j, 2) = magnitude;
+        }
+    }
+
+    string output_filename;
+    cout << "Please enter the output image name with extension (.jpg, .bmp, .png, .tga): ";
+    cin >> output_filename;
+    image.saveImage(output_filename);
+    system(output_filename.c_str());
+
+    return 0;
+
+}
 // ============================================================ //
 
 
@@ -261,7 +323,7 @@ int black_and_white(const string& image_name) {
                 image(i, j, 1) = 0;
                 image(i, j, 2) = 0;
             }
-                // Otherwise, set pixel to white
+            // Otherwise, set pixel to white
             else {
                 image(i, j, 0) = 255;
                 image(i, j, 1) = 255;
@@ -379,17 +441,17 @@ int Cropping_Image(const string& image_name) {
 // ============================================================ //
 // Grayscale Conversion Filter
 
-int Grayscale_Conversion (const string& File_Name ) {
-    Image img (File_Name) ;
+int Grayscale_Conversion(const string& File_Name) {
+    Image img(File_Name);
     for (int i = 0; i < img.width; ++i) {
         for (int j = 0; j < img.height; ++j) {
             unsigned int avg = 0;
             for (int k = 0; k < 3; ++k) {
-                avg += img(i,j,k) ;
-                avg / 3 ;
-                img(i,j,0) = avg ;
-                img(i,j,1) = avg ;
-                img(i,j,2) = avg ;
+                avg += img(i, j, k);
+                avg / 3;
+                img(i, j, 0) = avg;
+                img(i, j, 1) = avg;
+                img(i, j, 2) = avg;
 
             }
 
@@ -412,7 +474,7 @@ int Grayscale_Conversion (const string& File_Name ) {
 }
 // ============================================================ //
 // Filter 6: This filter allows the user to rotate the image clockwise by 90, 180 or 270 degrees as the user chooses
-int Rotate_Image(const string& image_name){
+int Rotate_Image(const string& image_name) {
     Image image(image_name);
     int newWidth = image.height; // New width after rotation
     int newHeight = image.width; // New height after rotation
@@ -499,30 +561,30 @@ int Rotate_Image(const string& image_name){
 // ============================================================ //
 // Filter 11: Resizing an image involves changing the dimensions of the entire image while maintaining the same image details
 
-int Resize_Image(const string& image_name){
+int Resize_Image(const string& image_name) {
     Image image(image_name);
-    cout<<"Current Width and Height of image is: \n";
-    cout<<"Width: "<<image.width<<endl;
-    cout<<"Height: "<<image.height<<endl;
+    cout << "Current Width and Height of image is: \n";
+    cout << "Width: " << image.width << endl;
+    cout << "Height: " << image.height << endl;
     int newWidth, newHeight;
-    cout<<"Enter the new dimensions you wish to use for your image: \n";
-    cout<<"Width: ";
-    cin>>newWidth;
-    cout<<"Height: ";
-    cin>>newHeight;
+    cout << "Enter the new dimensions you wish to use for your image: \n";
+    cout << "Width: ";
+    cin >> newWidth;
+    cout << "Height: ";
+    cin >> newHeight;
     Image resized_img(newWidth, newHeight);
-    float scaleW = (1.0f*image.width/newWidth), scaleH = (1.0f*image.height/newHeight);
+    float scaleW = (1.0f * image.width / newWidth), scaleH = (1.0f * image.height / newHeight);
     for (int i = 0; i < resized_img.height; ++i) {
         for (int j = 0; j < resized_img.width; ++j) {
-            for (int k = 0; k <resized_img.channels; ++k) {
-                resized_img(j, i, k) = image(round((j*scaleW)), round((i*scaleH)), k);
+            for (int k = 0; k < resized_img.channels; ++k) {
+                resized_img(j, i, k) = image(round((j * scaleW)), round((i * scaleH)), k);
             }
         }
     }
-    cout<<"What would you like to name the result file?\n";
-    cout<<"Type name and format you would like file to be saved as\n";
+    cout << "What would you like to name the result file?\n";
+    cout << "Type name and format you would like file to be saved as\n";
     string Res;
-    cin>>Res;
+    cin >> Res;
     resized_img.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -532,35 +594,35 @@ int Resize_Image(const string& image_name){
 // Filter 9: Adding a frame to a picture
 // This is one of the frame options which is a function to add a single border to the image
 
-int SingleBorderImg(const string& image_name){
+int SingleBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
-    int BW2 = BWidth*2, BH2 = 2*BHeight;
+    cout << "Insert Width and Height of the Frame Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
+    int BW2 = BWidth * 2, BH2 = 2 * BHeight;
     int R, G, B;
-    cout<<"Insert Values for R G B for the Frame Border: \n";
-    cout<<"Red: \n";
-    cin>>R;
-    cout<<"Green: \n";
-    cin>>G;
-    cout<<"Blue: \n";
-    cin>>B;
-    Image image1(image.width+BW2, image.height+BH2);
+    cout << "Insert Values for R G B for the Frame Border: \n";
+    cout << "Red: \n";
+    cin >> R;
+    cout << "Green: \n";
+    cin >> G;
+    cout << "Blue: \n";
+    cin >> B;
+    Image image1(image.width + BW2, image.height + BH2);
     for (int i = 0; i < BWidth; ++i) {
         for (int j = 0; j < image1.height; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image1(i, j, k) = R;
                 }
-                else if (k==1){
-                    image1(i, j, k) = G ;
+                else if (k == 1) {
+                    image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
@@ -568,58 +630,58 @@ int SingleBorderImg(const string& image_name){
     for (int i = 0; i < image1.width; ++i) {
         for (int j = 0; j < BHeight; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
-                    image1(i, j, k) = R ;
+                if (k == 0) {
+                    image1(i, j, k) = R;
                 }
-                else if (k==1){
-                    image1(i, j, k) = G ;
+                else if (k == 1) {
+                    image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
-    for (int i = image1.width-1; i >image1.width-BWidth-1; --i) {
+    for (int i = image1.width - 1; i > image1.width - BWidth - 1; --i) {
         for (int j = 0; j < image1.height; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
-                    image1(i, j, k) = R ;
+                if (k == 0) {
+                    image1(i, j, k) = R;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
     for (int i = 0; i < image1.width; ++i) {
-        for (int j = image1.height-1; j > image1.height - BHeight-1; --j) {
+        for (int j = image1.height - 1; j > image1.height - BHeight - 1; --j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image1(i, j, k) = R;
                 }
-                else if (k==1){
-                    image1(i, j, k) = G ;
+                else if (k == 1) {
+                    image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
-    for (int i = BWidth; i < image1.width-BWidth; ++i) {
-        for (int j = BHeight; j <image1.height-BHeight; ++j) {
+    for (int i = BWidth; i < image1.width - BWidth; ++i) {
+        for (int j = BHeight; j < image1.height - BHeight; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                image1(i, j, k) = image(i-BWidth, j-BHeight, k);
+                image1(i, j, k) = image(i - BWidth, j - BHeight, k);
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image1.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -627,35 +689,35 @@ int SingleBorderImg(const string& image_name){
 
 // This is another one of the frame options which is a function to add a double border to the image
 
-int DoubleBorderImg(const string& image_name){
+int DoubleBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Inner Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
-    int BW2 = BWidth*2, BH2 = 2*BHeight;
+    cout << "Insert Width and Height of the Frame Inner Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
+    int BW2 = BWidth * 2, BH2 = 2 * BHeight;
     int R, G, B;
-    cout<<"Insert Values for R G B for the Frame Inner Border: \n";
-    cout<<"Red: \n";
-    cin>>R;
-    cout<<"Green: \n";
-    cin>>G;
-    cout<<"Blue: \n";
-    cin>>B;
-    Image image1(image.width+BW2, image.height+BH2);
+    cout << "Insert Values for R G B for the Frame Inner Border: \n";
+    cout << "Red: \n";
+    cin >> R;
+    cout << "Green: \n";
+    cin >> G;
+    cout << "Blue: \n";
+    cin >> B;
+    Image image1(image.width + BW2, image.height + BH2);
     for (int i = 0; i < BWidth; ++i) {
         for (int j = 0; j < image1.height; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image1(i, j, k) = R;
                 }
-                else if (k==1){
-                    image1(i, j, k) = G ;
+                else if (k == 1) {
+                    image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
@@ -663,81 +725,81 @@ int DoubleBorderImg(const string& image_name){
     for (int i = 0; i < image1.width; ++i) {
         for (int j = 0; j < BHeight; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
-                    image1(i, j, k) = R ;
+                if (k == 0) {
+                    image1(i, j, k) = R;
                 }
-                else if (k==1){
-                    image1(i, j, k) = G ;
+                else if (k == 1) {
+                    image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
-    for (int i = image1.width-1; i >image1.width-BWidth-1; --i) {
+    for (int i = image1.width - 1; i > image1.width - BWidth - 1; --i) {
         for (int j = 0; j < image1.height; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
-                    image1(i, j, k) = R ;
+                if (k == 0) {
+                    image1(i, j, k) = R;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
     for (int i = 0; i < image1.width; ++i) {
-        for (int j = image1.height-1; j > image1.height - BHeight-1; --j) {
+        for (int j = image1.height - 1; j > image1.height - BHeight - 1; --j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image1(i, j, k) = R;
                 }
-                else if (k==1){
-                    image1(i, j, k) = G ;
+                else if (k == 1) {
+                    image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
-    for (int i = BWidth; i < image1.width-BWidth; ++i) {
-        for (int j = BHeight; j <image1.height-BHeight; ++j) {
+    for (int i = BWidth; i < image1.width - BWidth; ++i) {
+        for (int j = BHeight; j < image1.height - BHeight; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                image1(i, j, k) = image(i-BWidth, j-BHeight, k);
+                image1(i, j, k) = image(i - BWidth, j - BHeight, k);
             }
         }
     }
     int BWidth2, BHeight2;
-    cout<<"Insert Width and Height of the Frame Outer Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth2;
-    cout<<"Height: \n";
-    cin>>BHeight2;
-    int B2W2 = BWidth2*2, B2H2 = 2*BHeight2;
+    cout << "Insert Width and Height of the Frame Outer Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth2;
+    cout << "Height: \n";
+    cin >> BHeight2;
+    int B2W2 = BWidth2 * 2, B2H2 = 2 * BHeight2;
     int R2, G2, B2;
-    cout<<"Insert Values for R G B for the Frame Outer Border: \n";
-    cout<<"Red: \n";
-    cin>>R2;
-    cout<<"Green: \n";
-    cin>>G2;
-    cout<<"Blue: \n";
-    cin>>B2;
-    Image image2(image1.width+B2W2, image1.height+B2H2);
+    cout << "Insert Values for R G B for the Frame Outer Border: \n";
+    cout << "Red: \n";
+    cin >> R2;
+    cout << "Green: \n";
+    cin >> G2;
+    cout << "Blue: \n";
+    cin >> B2;
+    Image image2(image1.width + B2W2, image1.height + B2H2);
     for (int i = 0; i < BWidth2; ++i) {
         for (int j = 0; j < image2.height; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
@@ -746,59 +808,59 @@ int DoubleBorderImg(const string& image_name){
     for (int i = 0; i < image2.width; ++i) {
         for (int j = 0; j < BHeight2; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
         }
     }
-    for (int i = image2.width-1; i >image1.width-BWidth2-1; --i) {
+    for (int i = image2.width - 1; i > image1.width - BWidth2 - 1; --i) {
         for (int j = 0; j < image2.height; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
         }
     }
     for (int i = 0; i < image2.width; ++i) {
-        for (int j = image2.height-1; j > image2.height - BHeight2-1; --j) {
+        for (int j = image2.height - 1; j > image2.height - BHeight2 - 1; --j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
         }
     }
 
-    for (int i = BWidth2; i < image2.width-BWidth2; ++i) {
-        for (int j = BHeight2; j <image2.height-BHeight2; ++j) {
+    for (int i = BWidth2; i < image2.width - BWidth2; ++i) {
+        for (int j = BHeight2; j < image2.height - BHeight2; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                image2(i, j, k) = image1(i-BWidth2, j-BHeight2, k);
+                image2(i, j, k) = image1(i - BWidth2, j - BHeight2, k);
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image2.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -806,119 +868,119 @@ int DoubleBorderImg(const string& image_name){
 
 // This is another one of the frame options which is a function to add a spaced double border to the image
 
-int SpacedDoubleBorderImg(const string& image_name){
+int SpacedDoubleBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Inner Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
+    cout << "Insert Width and Height of the Frame Inner Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
     int Space;
-    cout<<"Insert the value of the Space between the two borders: \n";
-    cin>>Space;
+    cout << "Insert the value of the Space between the two borders: \n";
+    cin >> Space;
     int R, G, B;
-    cout<<"Insert Values for R G B for the Frame Inner Border: \n";
-    cout<<"Red: \n";
-    cin>>R;
-    cout<<"Green: \n";
-    cin>>G;
-    cout<<"Blue: \n";
-    cin>>B;
+    cout << "Insert Values for R G B for the Frame Inner Border: \n";
+    cout << "Red: \n";
+    cin >> R;
+    cout << "Green: \n";
+    cin >> G;
+    cout << "Blue: \n";
+    cin >> B;
     Image image1(image.width, image.height);
     for (int i = 0; i < image1.width; ++i) {
-        for (int j = 0; j <image1.height; ++j) {
+        for (int j = 0; j < image1.height; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
                 image1(i, j, k) = image(i, j, k);
             }
         }
     }
-    for (int i = Space-1; i < BWidth+Space; ++i) {
-        for (int j = Space-1; j < image1.height-Space; ++j) {
+    for (int i = Space - 1; i < BWidth + Space; ++i) {
+        for (int j = Space - 1; j < image1.height - Space; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image1(i, j, k) = R;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image1(i, j, k) = G;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image1(i, j, k) = B;
                 }
             }
         }
     }
-    for (int i = Space-1; i < image1.width-Space; ++i) {
-        for (int j = Space-1; j < BHeight+Space; ++j) {
+    for (int i = Space - 1; i < image1.width - Space; ++i) {
+        for (int j = Space - 1; j < BHeight + Space; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image1(i, j, k) = R;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image1(i, j, k) = G;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image1(i, j, k) = B;
                 }
             }
         }
     }
-    for (int i = image1.width-(Space+1); i >image1.width-(BWidth+1+Space); --i) {
-        for (int j = Space-1; j < image1.height-Space; ++j) {
+    for (int i = image1.width - (Space + 1); i > image1.width - (BWidth + 1 + Space); --i) {
+        for (int j = Space - 1; j < image1.height - Space; ++j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
-                    image1(i, j, k) = R ;
+                if (k == 0) {
+                    image1(i, j, k) = R;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
-    for (int i = Space-1; i < image1.width-Space; ++i) {
-        for (int j = image1.height-(Space+1); j > image1.height - (BHeight+Space+1); --j) {
+    for (int i = Space - 1; i < image1.width - Space; ++i) {
+        for (int j = image1.height - (Space + 1); j > image1.height - (BHeight + Space + 1); --j) {
             for (int k = 0; k < image1.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image1(i, j, k) = R;
                 }
-                else if (k==1){
-                    image1(i, j, k) = G ;
+                else if (k == 1) {
+                    image1(i, j, k) = G;
                 }
-                else if (k==2){
-                    image1(i, j, k) = B ;
+                else if (k == 2) {
+                    image1(i, j, k) = B;
                 }
             }
         }
     }
     int BWidth2, BHeight2;
-    cout<<"Insert Width and Height of the Frame Outer Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth2;
-    cout<<"Height: \n";
-    cin>>BHeight2;
-    int B2W2 = BWidth2*2, B2H2 = 2*BHeight2;
+    cout << "Insert Width and Height of the Frame Outer Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth2;
+    cout << "Height: \n";
+    cin >> BHeight2;
+    int B2W2 = BWidth2 * 2, B2H2 = 2 * BHeight2;
     int R2, G2, B2;
-    cout<<"Insert Values for R G B for the Frame Outer Border: \n";
-    cout<<"Red: \n";
-    cin>>R2;
-    cout<<"Green: \n";
-    cin>>G2;
-    cout<<"Blue: \n";
-    cin>>B2;
-    Image image2(image1.width+B2W2, image1.height+B2H2);
+    cout << "Insert Values for R G B for the Frame Outer Border: \n";
+    cout << "Red: \n";
+    cin >> R2;
+    cout << "Green: \n";
+    cin >> G2;
+    cout << "Blue: \n";
+    cin >> B2;
+    Image image2(image1.width + B2W2, image1.height + B2H2);
     for (int i = 0; i < BWidth2; ++i) {
         for (int j = 0; j < image2.height; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
@@ -927,59 +989,59 @@ int SpacedDoubleBorderImg(const string& image_name){
     for (int i = 0; i < image2.width; ++i) {
         for (int j = 0; j < BHeight2; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
         }
     }
-    for (int i = image2.width-1; i >image1.width-BWidth2-1; --i) {
+    for (int i = image2.width - 1; i > image1.width - BWidth2 - 1; --i) {
         for (int j = 0; j < image2.height; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
         }
     }
     for (int i = 0; i < image2.width; ++i) {
-        for (int j = image2.height-1; j > image2.height - BHeight2-1; --j) {
+        for (int j = image2.height - 1; j > image2.height - BHeight2 - 1; --j) {
             for (int k = 0; k < image2.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image2(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image2(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image2(i, j, k) = B2;
                 }
             }
         }
     }
 
-    for (int i = BWidth2; i < image2.width-BWidth2; ++i) {
-        for (int j = BHeight2; j <image2.height-BHeight2; ++j) {
+    for (int i = BWidth2; i < image2.width - BWidth2; ++i) {
+        for (int j = BHeight2; j < image2.height - BHeight2; ++j) {
             for (int k = 0; k < image2.channels; ++k) {
-                image2(i, j, k) = image1(i-BWidth2, j-BHeight2, k);
+                image2(i, j, k) = image1(i - BWidth2, j - BHeight2, k);
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image2.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -987,25 +1049,25 @@ int SpacedDoubleBorderImg(const string& image_name){
 
 // This is another frame option which adds a German Flag as a border
 
-int GermanBorderImg(const string& image_name){
+int GermanBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
+    cout << "Insert Width and Height of the Frame Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
     int BWidth3 = BWidth / 3, BHeight3 = BHeight / 3;
     for (int i = 0; i < BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
@@ -1014,171 +1076,171 @@ int GermanBorderImg(const string& image_name){
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-1; i >image.width-BWidth3-1; --i) {
+    for (int i = image.width - 1; i > image.width - BWidth3 - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-1; j > image.height - BHeight3-1; --j) {
+        for (int j = image.height - 1; j > image.height - BHeight3 - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = BWidth3; i < 2*BWidth3; ++i) {
+    for (int i = BWidth3; i < 2 * BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3; j < 2*BHeight3; ++j) {
+        for (int j = BHeight3; j < 2 * BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-BWidth3-1; i >image.width-(2*BWidth3)-1; --i) {
+    for (int i = image.width - BWidth3 - 1; i > image.width - (2 * BWidth3) - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-BHeight3-1; j > image.height -(BHeight3*2)-1; --j) {
+        for (int j = image.height - BHeight3 - 1; j > image.height - (BHeight3 * 2) - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = BWidth3*2; i < BWidth; ++i) {
+    for (int i = BWidth3 * 2; i < BWidth; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3*2; j < BHeight; ++j) {
+        for (int j = BHeight3 * 2; j < BHeight; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-(BWidth3*2)-1; i >image.width-BWidth-1; --i) {
+    for (int i = image.width - (BWidth3 * 2) - 1; i > image.width - BWidth - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-(BHeight3*2)-1; j > image.height -BHeight-1; --j) {
+        for (int j = image.height - (BHeight3 * 2) - 1; j > image.height - BHeight - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -1186,25 +1248,25 @@ int GermanBorderImg(const string& image_name){
 
 // This is another frame option which adds an Egyptian Flag as a border
 
-int EgyptBorderImg(const string& image_name){
+int EgyptBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
+    cout << "Insert Width and Height of the Frame Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
     int BWidth3 = BWidth / 3, BHeight3 = BHeight / 3;
     for (int i = 0; i < BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
@@ -1213,171 +1275,171 @@ int EgyptBorderImg(const string& image_name){
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-1; i >image.width-BWidth3-1; --i) {
+    for (int i = image.width - 1; i > image.width - BWidth3 - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-1; j > image.height - BHeight3-1; --j) {
+        for (int j = image.height - 1; j > image.height - BHeight3 - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = BWidth3; i < 2*BWidth3; ++i) {
+    for (int i = BWidth3; i < 2 * BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3; j < 2*BHeight3; ++j) {
+        for (int j = BHeight3; j < 2 * BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
-    for (int i = image.width-BWidth3-1; i >image.width-(2*BWidth3)-1; --i) {
+    for (int i = image.width - BWidth3 - 1; i > image.width - (2 * BWidth3) - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-BHeight3-1; j > image.height -(BHeight3*2)-1; --j) {
+        for (int j = image.height - BHeight3 - 1; j > image.height - (BHeight3 * 2) - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
-    for (int i = BWidth3*2; i < BWidth; ++i) {
+    for (int i = BWidth3 * 2; i < BWidth; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3*2; j < BHeight; ++j) {
+        for (int j = BHeight3 * 2; j < BHeight; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-(BWidth3*2)-1; i >image.width-BWidth-1; --i) {
+    for (int i = image.width - (BWidth3 * 2) - 1; i > image.width - BWidth - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-(BHeight3*2)-1; j > image.height -BHeight-1; --j) {
+        for (int j = image.height - (BHeight3 * 2) - 1; j > image.height - BHeight - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -1385,25 +1447,25 @@ int EgyptBorderImg(const string& image_name){
 
 // This is another frame option which adds the RGB colors as a border
 
-int RGBBorderImg(const string& image_name){
+int RGBBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
+    cout << "Insert Width and Height of the Frame Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
     int BWidth3 = BWidth / 3, BHeight3 = BHeight / 3;
     for (int i = 0; i < BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
@@ -1412,171 +1474,171 @@ int RGBBorderImg(const string& image_name){
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-1; i >image.width-BWidth3-1; --i) {
+    for (int i = image.width - 1; i > image.width - BWidth3 - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-1; j > image.height - BHeight3-1; --j) {
+        for (int j = image.height - 1; j > image.height - BHeight3 - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 255;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = BWidth3; i < 2*BWidth3; ++i) {
+    for (int i = BWidth3; i < 2 * BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3; j < 2*BHeight3; ++j) {
+        for (int j = BHeight3; j < 2 * BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-BWidth3-1; i >image.width-(2*BWidth3)-1; --i) {
+    for (int i = image.width - BWidth3 - 1; i > image.width - (2 * BWidth3) - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-BHeight3-1; j > image.height -(BHeight3*2)-1; --j) {
+        for (int j = image.height - BHeight3 - 1; j > image.height - (BHeight3 * 2) - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 255;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = BWidth3*2; i < BWidth; ++i) {
+    for (int i = BWidth3 * 2; i < BWidth; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3*2; j < BHeight; ++j) {
+        for (int j = BHeight3 * 2; j < BHeight; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
-    for (int i = image.width-(BWidth3*2)-1; i >image.width-BWidth-1; --i) {
+    for (int i = image.width - (BWidth3 * 2) - 1; i > image.width - BWidth - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-(BHeight3*2)-1; j > image.height -BHeight-1; --j) {
+        for (int j = image.height - (BHeight3 * 2) - 1; j > image.height - BHeight - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -1584,25 +1646,25 @@ int RGBBorderImg(const string& image_name){
 
 // This is another frame option which adds some nicely compatible colors as a border
 
-int NiceBorderImg(const string& image_name){
+int NiceBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
+    cout << "Insert Width and Height of the Frame Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
     int BWidth3 = BWidth / 3, BHeight3 = BHeight / 3;
     for (int i = 0; i < BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 225;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 157;
                 }
             }
@@ -1611,171 +1673,171 @@ int NiceBorderImg(const string& image_name){
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 225;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 157;
                 }
             }
         }
     }
-    for (int i = image.width-1; i >image.width-BWidth3-1; --i) {
+    for (int i = image.width - 1; i > image.width - BWidth3 - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 225;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 157;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-1; j > image.height - BHeight3-1; --j) {
+        for (int j = image.height - 1; j > image.height - BHeight3 - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 225;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 0;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 157;
                 }
             }
         }
     }
-    for (int i = BWidth3; i < 2*BWidth3; ++i) {
+    for (int i = BWidth3; i < 2 * BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 247;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3; j < 2*BHeight3; ++j) {
+        for (int j = BHeight3; j < 2 * BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 247;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
-    for (int i = image.width-BWidth3-1; i >image.width-(2*BWidth3)-1; --i) {
+    for (int i = image.width - BWidth3 - 1; i > image.width - (2 * BWidth3) - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 247;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-BHeight3-1; j > image.height -(BHeight3*2)-1; --j) {
+        for (int j = image.height - BHeight3 - 1; j > image.height - (BHeight3 * 2) - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 0;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 247;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 255;
                 }
             }
         }
     }
-    for (int i = BWidth3*2; i < BWidth; ++i) {
+    for (int i = BWidth3 * 2; i < BWidth; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 245;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 204;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3*2; j < BHeight; ++j) {
+        for (int j = BHeight3 * 2; j < BHeight; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 245;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 204;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
-    for (int i = image.width-(BWidth3*2)-1; i >image.width-BWidth-1; --i) {
+    for (int i = image.width - (BWidth3 * 2) - 1; i > image.width - BWidth - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 245;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 204;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-(BHeight3*2)-1; j > image.height -BHeight-1; --j) {
+        for (int j = image.height - (BHeight3 * 2) - 1; j > image.height - BHeight - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = 245;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = 204;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = 0;
                 }
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -1783,33 +1845,33 @@ int NiceBorderImg(const string& image_name){
 
 // This is another frame option which allows the user to choose the colors himself for the border
 
-int CustomBorderImg(const string& image_name){
+int CustomBorderImg(const string& image_name) {
     Image image(image_name);
     int BWidth, BHeight;
-    cout<<"Insert Width and Height of the Frame Border: \n";
-    cout<<"Width: \n";
-    cin>>BWidth;
-    cout<<"Height: \n";
-    cin>>BHeight;
+    cout << "Insert Width and Height of the Frame Border: \n";
+    cout << "Width: \n";
+    cin >> BWidth;
+    cout << "Height: \n";
+    cin >> BHeight;
     int R1, G1, B1;
-    cout<<"Insert Values for R G B for your outer custom Frame: \n";
-    cout<<"Red: \n";
-    cin>>R1;
-    cout<<"Green: \n";
-    cin>>G1;
-    cout<<"Blue: \n";
-    cin>>B1;
+    cout << "Insert Values for R G B for your outer custom Frame: \n";
+    cout << "Red: \n";
+    cin >> R1;
+    cout << "Green: \n";
+    cin >> G1;
+    cout << "Blue: \n";
+    cin >> B1;
     int BWidth3 = BWidth / 3, BHeight3 = BHeight / 3;
     for (int i = 0; i < BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R1;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G1;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B1;
                 }
             }
@@ -1818,187 +1880,187 @@ int CustomBorderImg(const string& image_name){
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R1;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G1;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B1;
                 }
             }
         }
     }
-    for (int i = image.width-1; i >image.width-BWidth3-1; --i) {
+    for (int i = image.width - 1; i > image.width - BWidth3 - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R1;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G1;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B1;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-1; j > image.height - BHeight3-1; --j) {
+        for (int j = image.height - 1; j > image.height - BHeight3 - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R1;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G1;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B1;
                 }
             }
         }
     }
     int R2, G2, B2;
-    cout<<"Insert Values for R G B for your middle custom Frame: \n";
-    cout<<"Red: \n";
-    cin>>R2;
-    cout<<"Green: \n";
-    cin>>G2;
-    cout<<"Blue: \n";
-    cin>>B2;
-    for (int i = BWidth3; i < 2*BWidth3; ++i) {
+    cout << "Insert Values for R G B for your middle custom Frame: \n";
+    cout << "Red: \n";
+    cin >> R2;
+    cout << "Green: \n";
+    cin >> G2;
+    cout << "Blue: \n";
+    cin >> B2;
+    for (int i = BWidth3; i < 2 * BWidth3; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B2;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3; j < 2*BHeight3; ++j) {
+        for (int j = BHeight3; j < 2 * BHeight3; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B2;
                 }
             }
         }
     }
-    for (int i = image.width-BWidth3-1; i >image.width-(2*BWidth3)-1; --i) {
+    for (int i = image.width - BWidth3 - 1; i > image.width - (2 * BWidth3) - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B2;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-BHeight3-1; j > image.height -(BHeight3*2)-1; --j) {
+        for (int j = image.height - BHeight3 - 1; j > image.height - (BHeight3 * 2) - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R2;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G2;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B2;
                 }
             }
         }
     }
     int R3, G3, B3;
-    cout<<"Insert Values for R G B for your inner custom Frame: \n";
-    cout<<"Red: \n";
-    cin>>R3;
-    cout<<"Green: \n";
-    cin>>G3;
-    cout<<"Blue: \n";
-    cin>>B3;
-    for (int i = BWidth3*2; i < BWidth; ++i) {
+    cout << "Insert Values for R G B for your inner custom Frame: \n";
+    cout << "Red: \n";
+    cin >> R3;
+    cout << "Green: \n";
+    cin >> G3;
+    cout << "Blue: \n";
+    cin >> B3;
+    for (int i = BWidth3 * 2; i < BWidth; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R3;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G3;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B3;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = BHeight3*2; j < BHeight; ++j) {
+        for (int j = BHeight3 * 2; j < BHeight; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R3;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G3;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B3;
                 }
             }
         }
     }
-    for (int i = image.width-(BWidth3*2)-1; i >image.width-BWidth-1; --i) {
+    for (int i = image.width - (BWidth3 * 2) - 1; i > image.width - BWidth - 1; --i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R3;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G3;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B3;
                 }
             }
         }
     }
     for (int i = 0; i < image.width; ++i) {
-        for (int j = image.height-(BHeight3*2)-1; j > image.height -BHeight-1; --j) {
+        for (int j = image.height - (BHeight3 * 2) - 1; j > image.height - BHeight - 1; --j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k==0){
+                if (k == 0) {
                     image(i, j, k) = R3;
                 }
-                else if (k==1){
+                else if (k == 1) {
                     image(i, j, k) = G3;
                 }
-                else if (k==2){
+                else if (k == 2) {
                     image(i, j, k) = B3;
                 }
             }
         }
     }
     string Res;
-    cout<<"What would you like to name the result file? (Include the format in the naming)\n";
-    cin>>Res;
+    cout << "What would you like to name the result file? (Include the format in the naming)\n";
+    cin >> Res;
     image.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -2006,54 +2068,54 @@ int CustomBorderImg(const string& image_name){
 
 // This is the function which combines all the other filters in one function
 
-int Frame_Image(const string& image_name){
-    while (true){
+int Frame_Image(const string& image_name) {
+    while (true) {
         char c;
-        cout<<"Choose Frame: \n"<<"A) Single Border\n"<<"B) Double Border\n"<<"C) Spaced Double Border\n"<<"D) Triple Border\n"<<"E) Back to Main Menu\n";
-        cin>>c;
+        cout << "Choose Frame: \n" << "A) Single Border\n" << "B) Double Border\n" << "C) Spaced Double Border\n" << "D) Triple Border\n" << "E) Back to Main Menu\n";
+        cin >> c;
         c = toupper(c);
-        if(c=='A'){
+        if (c == 'A') {
 
             SingleBorderImg(image_name);
 
         }
-        else if (c=='B'){
+        else if (c == 'B') {
 
             DoubleBorderImg(image_name);
         }
-        else if(c=='C'){
+        else if (c == 'C') {
 
             SpacedDoubleBorderImg(image_name);
         }
-        else if(c=='D'){
+        else if (c == 'D') {
             char ch;
-            cout<<"Choose Frame: \n"<<"A) German Flag Border\n"<<"B) Egyptian Flag Border\n"<<"C) RGB Colored Border\n"<<"D) Nicely Colored Border\n"<<"E) Custom Colored Border\n";
-            cin>>ch;
+            cout << "Choose Frame: \n" << "A) German Flag Border\n" << "B) Egyptian Flag Border\n" << "C) RGB Colored Border\n" << "D) Nicely Colored Border\n" << "E) Custom Colored Border\n";
+            cin >> ch;
             ch = toupper(ch);
-            if(ch =='A'){
+            if (ch == 'A') {
                 GermanBorderImg(image_name);
             }
-            else if (ch =='B'){
+            else if (ch == 'B') {
                 EgyptBorderImg(image_name);
             }
-            else if(ch == 'C'){
+            else if (ch == 'C') {
                 RGBBorderImg(image_name);
             }
-            else if (ch == 'D'){
+            else if (ch == 'D') {
                 NiceBorderImg(image_name);
             }
-            else if (ch == 'E'){
+            else if (ch == 'E') {
                 CustomBorderImg(image_name);
             }
             else {
-                cout<<"Invalid Input!\n";
+                cout << "Invalid Input!\n";
             }
         }
-        else if (c=='E'){
+        else if (c == 'E') {
             break;
         }
-        else{
-            cout<<"Please choose valid option!";
+        else {
+            cout << "Please choose valid option!";
         }
     }
     return 0;
@@ -2063,30 +2125,30 @@ int Frame_Image(const string& image_name){
 // Filter 13: Sunlight Effect
 // This filter adds a yellowish effect to the picture to allow for a 'sunlight' effect
 
-int SunshineEffect(const string& image_name){
+int SunshineEffect(const string& image_name) {
     Image image(image_name);
     Image image1(image.width, image.height);
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
             for (int k = 0; k < image.channels; ++k) {
-                if (k == 0){
-                    int R = image(i,j,k) * 1.2;
-                    image1(i ,j, k) = min(R, 255);
+                if (k == 0) {
+                    int R = image(i, j, k) * 1.2;
+                    image1(i, j, k) = min(R, 255);
                 }
-                else if (k == 1){
-                    int G = image(i,j,k) * 1.2;
-                    image1(i ,j, k) = min(G, 255);
+                else if (k == 1) {
+                    int G = image(i, j, k) * 1.2;
+                    image1(i, j, k) = min(G, 255);
                 }
                 else {
-                    int B = image(i,j,k) *0.8;
-                    image1(i,j,k)= max(B, 0);
+                    int B = image(i, j, k) * 0.8;
+                    image1(i, j, k) = max(B, 0);
                 }
             }
         }
     }
     string Res;
-    cout<<"Insert the name of the image file you would like to use (Include the format in the name)\n";
-    cin>>Res;
+    cout << "Insert the name of the image file you would like to use (Include the format in the name)\n";
+    cin >> Res;
     image1.saveImage(Res);
     system(Res.c_str());
     return 0;
@@ -2097,13 +2159,13 @@ int SunshineEffect(const string& image_name){
 int main() {
     char choice;
     string image_name;
-    string image_name_2 ;
+    string image_name_2;
     while (true) {
         cout << "                              \t\t*/* Welcome to our program */*\n";
         cout << "this program is a baby Photo Shop that can apply some filters in your photo ";
         cout << "What would you like to do?\n";
         cout << "A: Apply a filter to an image.\n"
-             << "B: Exit.\n";
+            << "B: Exit.\n";
         cin >> choice;
         choice = toupper(choice);
         if (choice == 'A') {
@@ -2114,7 +2176,7 @@ int main() {
             cout << "B. Black and White.\n";
             cout << "C. Flip Image.\n";
             cout << "D. Cropping_Image.\n";
-            cout << "E. Grayscale Conversion.\n" ;
+            cout << "E. Grayscale Conversion.\n";
             cout << "F. Merge Images.\n";
             cout << "G. Blur Image.\n";
             cout << "H. Rotate Image.\n";
@@ -2124,79 +2186,85 @@ int main() {
             cout << "L. apply_DenDen_Mushi_Filter.\n";
             cout << "M.purple Filter at night.\n";
             cout << "N.light_darkfilter.\n";
+            cout << "o.Detect_ImageEdges.\n";
             char filter_choice;
             cin >> filter_choice;
             filter_choice = toupper(filter_choice);
             switch (filter_choice) {
-                case 'A':
-                    invert_image(image_name);
-                    break;
-                case 'B':
-                    black_and_white(image_name);
-                    break;
-                case 'C':
-                    flip_image(image_name);
-                    break;
-                case 'D':
-                    Cropping_Image(image_name);
-                    break;
-                case 'E':
-                    Grayscale_Conversion(image_name);
-                    break;
-                case 'F' :
-                    cout << " Enter The Image 2 Name : ";
-                    cin >> image_name_2 ;
-                    merge_images(image_name,image_name_2) ;
-                    break;
-                case 'G' : {
-                    Image my_image(image_name);
+            case 'A':
+                invert_image(image_name);
+                break;
+            case 'B':
+                black_and_white(image_name);
+                break;
+            case 'C':
+                flip_image(image_name);
+                break;
+            case 'D':
+                Cropping_Image(image_name);
+                break;
+            case 'E':
+                Grayscale_Conversion(image_name);
+                break;
+            case 'F':
+                cout << " Enter The Image 2 Name : ";
+                cin >> image_name_2;
+                merge_images(image_name, image_name_2);
+                break;
+            case 'G': {
+                Image my_image(image_name);
 
-                    // Blur radius
-                    int blur_radius = 3;
+                // Blur radius
+                int blur_radius = 3;
 
-                    // Apply blur to the image
-                    applyBlur(my_image, blur_radius);
+                // Apply blur to the image
+                applyBlur(my_image, blur_radius);
 
-                    // Save the blurred image
+                // Save the blurred image
 
-                    applyBlur(my_image, blur_radius);
-                    break;
-                }
-                case 'H' :{
-                    Rotate_Image(image_name);
-                    break ;
-                }
-                case 'I':{
-                    Resize_Image(image_name);
-                    break;
-                }
-                case 'J' :{
-                    Frame_Image(image_name);
-                    break;
-                }
-                case 'K' :{
-                    SunshineEffect(image_name);
-                    break;
-                }
-                case 'L' : {
-                    Image my_image (image_name) ;
-                    apply_DenDen_Mushi_Filter (my_image);
-                    break;
-                }
-                case 'M': {
-                    purble_image(image_name);
-                    break;
-                }
-                case 'N': {
-                    light_darkfilter(image_name);
-                    break;
-                }
-                default : {
-                    cout << " Invalid Input.";
-                    break;
-                }
+                applyBlur(my_image, blur_radius);
+                break;
             }
-        } else if (choice == 'B') {
+            case 'H': {
+                Rotate_Image(image_name);
+                break;
+            }
+            case 'I': {
+                Resize_Image(image_name);
+                break;
+            }
+            case 'J': {
+                Frame_Image(image_name);
+                break;
+            }
+            case 'K': {
+                SunshineEffect(image_name);
+                break;
+            }
+            case 'L': {
+                Image my_image(image_name);
+                apply_DenDen_Mushi_Filter(my_image);
+                break;
+            }
+            case 'M': {
+                purble_image(image_name);
+                break;
+            }
+            case 'N': {
+                light_darkfilter(image_name);
+                break;
+            }
+            case 'O': {
+                Detect_ImageEdges(image_name);
+                break;
+            }
+            default: {
+                cout << " Invalid Input.";
+                break;
+            }
+            }
+        }
+        else if (choice == 'B') {
             cout << "Thank you for using our filters.\n";
             break;
         }
@@ -2208,3 +2276,4 @@ int main() {
 
     return 0;
 }
+
