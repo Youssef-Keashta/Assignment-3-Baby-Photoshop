@@ -1024,46 +1024,46 @@ int main() {
         cin >> choice;
         if (choice == 'A') {
             cout << "Which filter would you like to apply?\n";
-            cout << "1. Invert Image.\n";
-            cout << "2. Black and White.\n";
-            cout << "3. Flip Image.\n";
-            cout << "4. Cropping_Image.\n";
-            cout << "5. Grayscale Conversion.\n" ;
-            cout << "6. Merge Images.\n";
-            cout << "7. Blur Image.\n";
-            cout << "8. Rotate Image.\n";
-            cout << "9. Resize Image.\n";
-            cout << "10. Picture Frame.\n";
-            cout << "11. Sunlight Effect.\n";
-            cout << "12. apply_DenDen_Mushi_Filter.\n";
-            cout << "13.purple Filter at night.\n";
-            cout << "14.light_darkfilter.\n";
+            cout << "A. Invert Image.\n";
+            cout << "B. Black and White.\n";
+            cout << "C. Flip Image.\n";
+            cout << "D. Cropping_Image.\n";
+            cout << "E. Grayscale Conversion.\n" ;
+            cout << "F. Merge Images.\n";
+            cout << "G. Blur Image.\n";
+            cout << "H. Rotate Image.\n";
+            cout << "I. Resize Image.\n";
+            cout << "J. Picture Frame.\n";
+            cout << "K. Sunlight Effect.\n";
+            cout << "L. apply_DenDen_Mushi_Filter.\n";
+            cout << "M.purple Filter at night.\n";
+            cout << "N.light_darkfilter.\n";
             char filter_choice;
             cin >> filter_choice;
             cout << "Please enter the image name: ";
             cin >> image_name;
             switch (filter_choice) {
-                case '1':
+                case 'A':
                     invert_image(image_name);
                     break;
-                case '2':
+                case 'B':
                     black_and_white(image_name);
                     break;
-                case '3':
+                case 'C':
                     flip_image(image_name);
                     break;
-                case '4':
+                case 'D':
                     Cropping_Image(image_name);
                     break;
-                case '5':
+                case 'E':
                     Grayscale_Conversion(image_name);
                     break;
-                case '6' :
+                case 'F' :
                     cout << " Enter The Image 2 Name : ";
                     cin >> image_name_2 ;
                     merge_images(image_name,image_name_2) ;
                     break;
-                case '7' : {
+                case 'G' : {
                     Image my_image(image_name);
 
                     // Blur radius
@@ -1077,31 +1077,32 @@ int main() {
                     applyBlur(my_image, blur_radius);
                     break;
                 }
-                case '8' :{
+                case 'H' :{
                     Rotate_Image(image_name);
                     break ;
                 }
-                case '9':{
+                case 'I':{
                     Resize_Image(image_name);
                     break;
                 }
-                case '10' :{
+                case 'J' :{
                     Frame_Image(image_name);
                     break;
                 }
-                case '11' :{
+                case 'K' :{
                     SunshineEffect(image_name);
                     break;
                 }
-                case '12' : {
+                case 'L' : {
                     Image my_image (image_name) ;
                     apply_DenDen_Mushi_Filter (my_image);
                     break;
-                case '13': {
+                }
+                case 'M': {
                     purble_image(image_name);
                     break;
                 }
-                case '14': {
+                case 'N': {
                     light_darkfilter(image_name);
                     break;
                 }
@@ -1113,7 +1114,8 @@ int main() {
         } else if (choice == 'B') {
             cout << "Thank you for using our filters.\n";
             break;
-        } else {
+        }
+        else {
             cout << "Please enter a valid input.\n";
             break;
         }
