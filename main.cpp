@@ -1,4 +1,4 @@
-// FCAI – Structured Programming – 2024 - Assignment 3.
+//FCAI – Structured Programming – 2024 - Assignment 3.
 // File: CS112_A3_part1_28_20230573_20231175_20231154.cpp
 // Purpose:This program is baby Photoshop and contains some filters that can modify images as you like
 // Author1: Youssef Ahmed Fathi , ID1 : 20230573 .
@@ -9,7 +9,7 @@
 // ID2:20231175 _ she did [Filter 3 (Invert Image) , Filter 6 ( Rotate Image ), Filter 9 ( picture Frame ), Filter 12 ( Blur 2 Images ), Filter 16  ( purble filter )]
 // ID3:20231154 _ he did  [Filter 2 (Black And White) , Filter 5 (Flip Image) , Filter 8 (Cropped Image) , Filter 11 (Resize Image )  , Filter 15 (DenDen_Mushi_Filter)]
 
-// ---------------------the link of digram-------------------------- 
+// ---------------------the link of digram--------------------------
 //https://drive.google.com/file/d/1-H-aXNevYcrJmrZ_kwKYjjufES66-GYP/view?usp=sharing
 
 
@@ -230,61 +230,42 @@ int light_darkfilter(const string& image_name) {
 
 //---------------Detect_ImageEdges-------------
 
-int Detect_ImageEdges(const string& image_name) {
+void Detect_filter(const string& image_name) {
+    // Convert the image to black and white
     Image image(image_name);
-
-    // Convert the image to grayscale
+    int avg = 0;
     for (int i = 0; i < image.width; ++i) {
         for (int j = 0; j < image.height; ++j) {
-            int avg = (image(i, j, 0) + image(i, j, 1) + image(i, j, 2)) / 3;
-            image(i, j, 0) = avg;
-            image(i, j, 1) = avg;
-            image(i, j, 2) = avg;
+            avg += (image(i, j, 0) + image(i, j, 1) + image(i, j, 2)) / 3;
+        }
+    }
+    avg /= image.width * image.height;
+
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            int pixelValue = (image(i, j, 0) + image(i, j, 1) + image(i, j, 2)) / 3;
+
+            if (pixelValue > avg)
+                image(i, j, 0) = image(i, j, 1) = image(i, j, 2) = 255;
+            else
+                image(i, j, 0) = image(i, j, 1) = image(i, j, 2) = 0;
         }
     }
 
-    // Sobel operator kernels
-    int kernelX[3][3] = { {1, 0, -1}, {2, 0, -2}, {1, 0, -1} };
-    int kernelY[3][3] = { {1, 2, 1}, {0, 0, 0}, {-1, -2, -1} };
-
-    // Apply Sobel operator to detect edges
-    for (int i = 1; i < image.width - 1; ++i) {
-        for (int j = 1; j < image.height - 1; ++j) {
-            int sumX = 0, sumY = 0;
-
-            // Calculate gradient using Sobel operator
-            for (int x = 0; x < 3; ++x) {
-                for (int y = 0; y < 3; ++y) {
-                    int pixelValue = image(i + x - 1, j + y - 1, 0);
-                    sumX += kernelX[x][y] * pixelValue;
-                    sumY += kernelY[x][y] * pixelValue;
-                }
-            }
-
-            // Compute magnitude of the gradient
-            int magnitude = sqrt(sumX * sumX + sumY * sumY);
-
-            // Clamp magnitude to [0, 255]
-            magnitude = min(255, max(0, magnitude));
-
-            // Enhance edges
-            magnitude = 255 - magnitude;
-
-            // Set the pixel value
-            image(i, j, 0) = magnitude;
-            image(i, j, 1) = magnitude;
-            image(i, j, 2) = magnitude;
+    // Find edges
+    for (int i = 0; i < image.width - 1; ++i) {
+        for (int j = 0; j < image.height - 1; ++j) {
+            if (image(i + 1, j, 0) != image(i, j, 0) || image(i, j + 1, 0) != image(i, j, 0))
+                image(i, j, 0) = image(i, j, 1) = image(i, j, 2) = 0;
+            else
+                image(i, j, 0) = image(i, j, 1) = image(i, j, 2) = 255;
         }
     }
-
     string output_filename;
     cout << "Please enter the output image name with extension (.jpg, .bmp, .png, .tga): ";
     cin >> output_filename;
     image.saveImage(output_filename);
     system(output_filename.c_str());
-
-    return 0;
-
 }
 // ============================================================ //
 
@@ -2255,7 +2236,7 @@ int main() {
                 break;
             }
             case 'O': {
-                Detect_ImageEdges(image_name);
+                Detect_filter(image_name);
                 break;
             }
             default: {
@@ -2276,4 +2257,3 @@ int main() {
 
     return 0;
 }
-
